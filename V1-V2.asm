@@ -97,7 +97,7 @@ notLetterMsg:
     ;Jump au début du programme
     jmp _start
 
-goodLengthMsg:
+goodLengthMsg: ;Bonne longueur pour le message
     mov ecx, 0
     mov ebx, 0
     loop_CheckAsciiChar:

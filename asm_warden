@@ -1,0 +1,46 @@
+section .data
+    alphabet db "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 0 ; Les caractères utilisables dans le mot de passe
+    alphabetSize db 62 ; Taille de l'alphabet (sans le caractère nul)
+
+section .bss
+    password resb 13 ; Réserve de l'espace pour un mot de passe de 12 caractères + caractère nul
+
+section .text
+global _start
+
+_start:
+    mov ecx, 12 ; Longueur désirée du mot de passe
+
+generate_pass:
+    dec ecx
+    jl done ; Si ecx < 0, fin de la génération
+
+    ; Ici, on simule une génération aléatoire basique en utilisant le compteur 'ecx' et un masque simple
+    ; ATTENTION : Ce n'est pas une méthode de génération aléatoire sécurisée !
+    mov eax, ecx
+    xor edx, edx
+    mov ebx, alphabetSize
+    div ebx ; Divise 'eax' par 'ebx', résultat dans 'eax', reste dans 'edx'
+
+    ; Utilise 'edx' pour sélectionner un caractère aléatoire dans 'alphabet'
+    movzx edx, byte [alphabet + edx]
+    ; Stocke le caractère dans 'password'
+    mov [password + ecx], dl
+
+    jmp generate_pass
+
+done:
+    ; Ajout du caractère nul à la fin du mot de passe
+    mov byte [password + 12], 0
+
+    ; Affiche le mot de passe généré
+    mov eax, 4 ; syscall write
+    mov ebx, 1 ; stdout
+    mov ecx, password ; adresse du mot de passe
+    mov edx, 13 ; longueur du mot de passe + caractère nul
+    int 0x80
+
+    ; Termine le programme
+    mov eax, 1 ; syscall exit
+    xor ebx, ebx
+    int 0x80
